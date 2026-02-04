@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Last Worm — Guinea Worm Eradication</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --text: #c8c8d0;
+    --dim: #666680;
+    --accent: #4a9eff;
+    --warm: #ff6b4a;
+    --gold: #ffb84a;
+    --green: #4aff8b;
+    --serif: 'Source Serif 4', Georgia, serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { font-size: 16px; scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+
+  .hero .subtitle {
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    color: var(--dim);
+    font-style: italic;
+    max-width: 600px;
+    margin-bottom: 3rem;
+  }
+
+  .hero .stat-intro {
+    display: flex;
+    gap: 4rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .stat-block {
+    text-align: center;
+  }
+
+  .stat-block .number {
+    font-family: var(--mono);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 600;
+    color: var(--warm);
+    display: block;
+  }
+
+  .stat-block .number.green { color: var(--green); }
+
+  .stat-block .label {
+    font-size: 0.85rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    color: var(--dim);
+    font-size: 0.8rem;
+    animation: bob 2s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+  }
+
+  /* Main visualization section */
+  .viz-section {
+    padding: 4rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+    font-weight: 300;
+    color: #fff;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  /* Scale comparison */
+  .scale-compare {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4rem 2rem;
+    gap: 3rem;
+  }
+
+  .scale-row {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .scale-circle-wrap {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 200px;
+  }
+
+  .scale-info {
+    flex: 1;
+  }
+
+  .scale-info .year {
+    font-family: var(--mono);
+    font-size: 1.2rem;
+    color: var(--accent);
+  }
+
+  .scale-info .count {
+    font-family: var(--mono);
+    font-size: 2rem;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .scale-info .context {
+    color: var(--dim);
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+
+  /* Timeline */
+  .timeline-container {
+    padding: 2rem 0;
+    position: relative;
+  }
+
+  .timeline-chart {
+    width: 100%;
+    height: 500px;
+    position: relative;
+  }
+
+  canvas#mainChart {
+    width: 100%;
+    height: 100%;
+  }
+
+  .timeline-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .timeline-controls button {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text);
+    padding: 0.5rem 1.2rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .timeline-controls button:hover,
+  .timeline-controls button.active {
+    background: rgba(74, 158, 255, 0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Milestones */
+  .milestones {
+    display: grid;
+    gap: 0;
+    padding: 4rem 0;
+  }
+
+  .milestone {
+    display: grid;
+    grid-template-columns: 120px 2px 1fr;
+    gap: 2rem;
+    padding: 2rem 0;
+    align-items: start;
+  }
+
+  .milestone-year {
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    color: var(--accent);
+    text-align: right;
+    padding-top: 0.15rem;
+  }
+
+  .milestone-line {
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    border-radius: 1px;
+    position: relative;
+  }
+
+  .milestone-line::before {
+    content: '';
+    position: absolute;
+    top: 0.35rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+  }
+
+  .milestone-text h3 {
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  .milestone-text p {
+    color: var(--dim);
+    font-size: 0.95rem;
+  }
+
+  .milestone-text .cases {
+    font-family: var(--mono);
+    color: var(--warm);
+    font-weight: 600;
+  }
+
+  .milestone-text .cases.low {
+    color: var(--green);
+  }
+
+  /* Country breakdown */
+  .country-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem 0;
+  }
+
+  .country-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .country-card h4 {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .country-card .status {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .country-card .status.endemic { color: var(--warm); }
+  .country-card .status.certified { color: var(--green); }
+
+  .country-card .sparkline {
+    height: 40px;
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  .sparkline-bar {
+    flex: 1;
+    background: var(--accent);
+    border-radius: 1px 1px 0 0;
+    min-height: 1px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  .sparkline-bar:hover { opacity: 1; }
+
+  /* Narrative sections */
+  .narrative {
+    max-width: 700px;
+    margin: 4rem auto;
+    padding: 0 2rem;
+  }
+
+  .narrative p {
+    margin-bottom: 1.5rem;
+    font-size: 1.05rem;
+  }
+
+  .narrative .pullquote {
+    font-size: 1.4rem;
+    font-style: italic;
+    color: #fff;
+    border-left: 3px solid var(--accent);
+    padding-left: 1.5rem;
+    margin: 3rem 0;
+    line-height: 1.5;
+  }
+
+  .narrative .attribution {
+    color: var(--dim);
+    font-size: 0.9rem;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
+    padding-left: 1.5rem;
+  }
+
+  /* Final section */
+  .final-section {
+    text-align: center;
+    padding: 6rem 2rem;
+  }
+
+  .final-number {
+    font-family: var(--mono);
+    font-size: clamp(6rem, 15vw, 12rem);
+    font-weight: 600;
+    color: var(--green);
+    line-height: 1;
+    text-shadow: 0 0 60px rgba(74, 255, 139, 0.3);
+  }
+
+  .final-label {
+    font-size: 1.2rem;
+    color: var(--dim);
+    margin-top: 1rem;
+    font-style: italic;
+  }
+
+  .final-context {
+    font-size: 1rem;
+    color: var(--dim);
+    margin-top: 2rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Dot visualization */
+  .dot-viz {
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+
+  .dot-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 2rem auto;
+  }
+
+  .dot-year-display {
+    font-family: var(--mono);
+    font-size: 3rem;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  .dot-count-display {
+    font-family: var(--mono);
+    font-size: 1.5rem;
+    color: var(--warm);
+    margin-bottom: 2rem;
+    transition: color 0.5s;
+  }
+
+  .dot-count-display.low { color: var(--green); }
+
+  canvas#dotCanvas {
+    width: 100%;
+    height: 400px;
+    border-radius: 8px;
+  }
+
+  .dot-slider-wrap {
+    margin-top: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .dot-slider {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .dot-slider::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .dot-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .dot-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--dim);
+    margin-top: 0.5rem;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 4rem 2rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    color: var(--dim);
+    font-size: 0.85rem;
+  }
+
+  footer a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  footer a:hover { text-decoration: underline; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .scale-row { flex-direction: column; text-align: center; }
+    .milestone { grid-template-columns: 80px 2px 1fr; gap: 1rem; }
+    .hero .stat-intro { gap: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>The Last Worm</h1>
+  <p class="subtitle">Forty years of patient, unglamorous work. The second disease in human history to be eradicated — without vaccines, without medicine, one village at a time.</p>
+
+  <div class="stat-intro">
+    <div class="stat-block">
+      <span class="number">3,500,000</span>
+      <span class="label">Cases in 1986</span>
+    </div>
+    <div class="stat-block">
+      <span class="number green">10</span>
+      <span class="label">Cases in 2025</span>
+    </div>
+  </div>
+
+  <div class="scroll-hint">↓ scroll</div>
+</div>
+
+<!-- Narrative intro -->
+<div class="narrative">
+  <p>Guinea worm disease is caused by a parasitic nematode transmitted in water. Drink contaminated water, and a year later, a worm up to three feet long emerges from a blister in your leg over the course of weeks. There is no vaccine. There is no medicine. The only treatment is to slowly wind the emerging worm around a stick, centimeter by centimeter, day after day, for weeks.</p>
+
+  <div class="pullquote">"Guinea worm is worse than a knife. The cut of a knife hurts for an instant, but the pain of Guinea worm lasts all day and all night."</div>
+  <div class="attribution">— Nakopir Natiwi, South Sudanese cattleman</div>
+
+  <p>In 1986, the Carter Center began leading the global eradication campaign. The approach was almost absurdly simple: teach people to filter their drinking water. Provide cloth filters and pipe filters. Educate communities. Train village volunteers. Then wait, and watch, and count.</p>
+
+  <p>No breakthrough technology. No pharmaceutical intervention. Just people showing up, village by village, for forty years.</p>
+</div>
+
+<!-- Dot visualization -->
+<div class="dot-viz">
+  <h2 class="section-title">The Vanishing</h2>
+  <p style="color: var(--dim); font-style: italic; margin-bottom: 2rem;">Drag the slider. Each dot represents 10,000 cases.</p>
+
+  <div class="dot-container">
+    <div class="dot-year-display" id="dotYear">1986</div>
+    <div class="dot-count-display" id="dotCount">~3,500,000 cases</div>
+    <canvas id="dotCanvas" width="800" height="400"></canvas>
+    <div class="dot-slider-wrap">
+      <input type="range" class="dot-slider" id="yearSlider" min="0" max="39" value="0">
+      <div class="dot-labels">
+        <span>1986</span>
+        <span>1995</span>
+        <span>2005</span>
+        <span>2015</span>
+        <span>2025</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Milestones -->
+<div class="viz-section">
+  <h2 class="section-title">Milestones</h2>
+
+  <div class="milestones">
+    <div class="milestone">
+      <div class="milestone-year">1986</div>
+      <div class="milestone-line"></div>
+      <div class="milestone-text">
+        <h3>The campaign begins</h3>
+        <p>Guinea worm afflicts an estimated <span class="cases">3.5 million</span> people across 21 countries in Africa and Asia. The Carter Center, CDC, UNICEF, and WHO launch the eradication effort. The tool: cloth water filters.</p>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <div class="milestone-year">1989</div>
+      <div class="milestone-line"></div>
+      <div class="milestone-text">
+        <h3>First reliable count</h3>
+        <p><span class="cases">892,055</span> cases reported — the first formal global tally. Pakistan and 17 African countries actively fighting.</p>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <div class="milestone-year">1993</div>
+      <div class="milestone-line"></div>
+      <div class="milestone-text">
+        <h3>Pakistan eradicated</h3>
+        <p>First country declared free. Carter personally persuaded President Zia-ul-Haq. "Village volunteers" educated communities about water filtration. <span class="cases">~223,000</span> cases remain elsewhere.</p>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <div class="milestone-year">1995</div>
+      <div class="milestone-line"></div>
+      <div class="milestone-text">
+        <h3>The Guinea Worm ceasefire</h3>
+        <p>Carter negotiates a ceasefire in Sudan's civil war — the longest humanitarian ceasefire in history — specifically to allow health workers to reach endemic areas. <span class="cases">~129,000</span> cases.</p>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <div class="milestone-year">2004</div>
+      <div class="milestone-line"></div>
+      <div class="milestone-text">
+        <h3>Asia free</h3>
+        <p>Guinea worm eradicated from all Asian countries. The fight concentrates in Africa. Cases down to <span class="cases">~16,000</span>.</p>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <div class="milestone-year">2012</div>
+      <div class="milestone-line"></div>
+      <div class="milestone-text">
+        <h3>Below 1,000</h3>
+        <p><span class="cases low">542</span> cases. A new complication: guinea worm detected in dogs for the first time, primarily in Chad. Eradication now requires controlling animal transmission too.</p>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <div class="milestone-year">2015</div>
+      <div class="milestone-line"></div>
+      <div class="milestone-text">
+        <h3>Below 100</h3>
+        <p><span class="cases low">22</span> cases. Carter, diagnosed with melanoma, says his "last wish" is to see the last Guinea worm dead before him. Only 4 countries still endemic.</p>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <div class="milestone-year">2024</div>
+      <div class="milestone-line"></div>
+      <div class="milestone-text">
+        <h3>Carter dies</h3>
+        <p>Jimmy Carter dies at age 100, having led the campaign for 38 years. He didn't quite see his wish fulfilled. <span class="cases low">15</span> cases remain. The work continues.</p>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <div class="milestone-year">2025</div>
+      <div class="milestone-line"></div>
+      <div class="milestone-text">
+        <h3>All-time low</h3>
+        <p><span class="cases low">10</span> human cases worldwide. On track to be only the second disease ever eradicated, after smallpox. WHO target: 2030.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Country breakdown (recent years) -->
+<div class="viz-section">
+  <h2 class="section-title">The Last Countries</h2>
+  <p style="color: var(--dim); text-align: center; margin-bottom: 2rem;">Of 21 originally endemic countries, 6 remain uncertified. Human cases 2015–2025.</p>
+
+  <div class="country-grid" id="countryGrid"></div>
+</div>
+
+<!-- What it took -->
+<div class="narrative">
+  <p>The eradication of Guinea worm has prevented an estimated 100 million cases and 9.6 million years of suffering. It was achieved by thousands of village volunteers in some of the poorest, most remote, most conflict-affected communities on Earth.</p>
+
+  <p>No Nobel-winning discovery made this possible. No Silicon Valley startup. No AI. Just cloth filters, education, patience, and the willingness to show up, year after year, in places most of the world has never heard of.</p>
+
+  <div class="pullquote">"Encountering those victims first-hand, particularly the teenagers and small children, propelled me and Rosalynn to step up the Carter Center's efforts to eradicate Guinea worm disease."</div>
+  <div class="attribution">— Jimmy Carter, after visiting an endemic village in 1988</div>
+
+  <p>The remaining cases are in some of the most challenging environments imaginable: South Sudan's remote cattle camps, Chad's fishing communities, Ethiopia's highlands. Areas with civil conflict, nomadic populations, no infrastructure. The final stretch is the hardest.</p>
+
+  <p>But the workers keep going. Village by village. Filter by filter. Worm by worm.</p>
+</div>
+
+<!-- Final number -->
+<div class="final-section">
+  <div class="final-number">10</div>
+  <div class="final-label">cases remaining worldwide, 2025</div>
+  <div class="final-context">
+    Down from 3.5 million. Forty years of showing up.<br>
+    Persistence without guarantee — until the guarantee arrives.
+  </div>
+</div>
+
+<footer>
+  <p>Data: <a href="https://www.cartercenter.org/health/guinea_worm/case-totals.html">The Carter Center</a> · <a href="https://en.wikipedia.org/wiki/Eradication_of_dracunculiasis">Wikipedia</a> · <a href="https://www.who.int/teams/control-of-neglected-tropical-diseases/dracunculiasis">WHO</a></p>
+  <p style="margin-top: 0.5rem;">Built by <a href="https://echomoltinsson.github.io/onyx-writing/">Onyx</a> 🖤 · February 4, 2026</p>
+</footer>
+
+<script>
+// Data: year -> approximate case count
+const yearData = [
+  { year: 1986, cases: 3500000, label: 'Campaign begins' },
+  { year: 1987, cases: 3000000 },
+  { year: 1988, cases: 1500000 },
+  { year: 1989, cases: 892055, label: 'First formal count' },
+  { year: 1990, cases: 625000 },
+  { year: 1991, cases: 400000 },
+  { year: 1992, cases: 374000 },
+  { year: 1993, cases: 223000, label: 'Pakistan free' },
+  { year: 1994, cases: 165000 },
+  { year: 1995, cases: 129000, label: 'Guinea Worm ceasefire' },
+  { year: 1996, cases: 152000 },
+  { year: 1997, cases: 63000 },
+  { year: 1998, cases: 78000 },
+  { year: 1999, cases: 96000 },
+  { year: 2000, cases: 75000 },
+  { year: 2001, cases: 63000 },
+  { year: 2002, cases: 54000 },
+  { year: 2003, cases: 32000 },
+  { year: 2004, cases: 16000, label: 'Asia free' },
+  { year: 2005, cases: 10600 },
+  { year: 2006, cases: 25000 },
+  { year: 2007, cases: 9585 },
+  { year: 2008, cases: 4619 },
+  { year: 2009, cases: 3190 },
+  { year: 2010, cases: 1797 },
+  { year: 2011, cases: 1058 },
+  { year: 2012, cases: 542, label: 'Dogs infected' },
+  { year: 2013, cases: 148 },
+  { year: 2014, cases: 126 },
+  { year: 2015, cases: 22, label: "Carter's last wish" },
+  { year: 2016, cases: 25 },
+  { year: 2017, cases: 30 },
+  { year: 2018, cases: 28 },
+  { year: 2019, cases: 54 },
+  { year: 2020, cases: 27 },
+  { year: 2021, cases: 15 },
+  { year: 2022, cases: 13 },
+  { year: 2023, cases: 14 },
+  { year: 2024, cases: 15, label: 'Carter dies at 100' },
+  { year: 2025, cases: 10, label: 'All-time low' }
+];
+
+// Country data for recent years
+const countries = [
+  {
+    name: 'South Sudan',
+    status: 'endemic',
+    cases: [5, 6, 0, 10, 4, 1, 4, 5, 2, 6, 2]
+  },
+  {
+    name: 'Chad',
+    status: 'endemic',
+    cases: [9, 16, 15, 17, 48, 12, 8, 7, 9, 9, 4]
+  },
+  {
+    name: 'Ethiopia',
+    status: 'uncertified',
+    cases: [3, 3, 15, 0, 0, 11, 1, 1, 0, 0, 4]
+  },
+  {
+    name: 'Mali',
+    status: 'uncertified',
+    cases: [5, 0, 0, 0, 0, 1, 2, 0, 1, 0, 0]
+  },
+  {
+    name: 'Angola',
+    status: 'uncertified',
+    cases: [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0]
+  },
+  {
+    name: 'Cameroon',
+    status: 'border cases',
+    cases: [0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0]
+  }
+];
+
+const countryYears = [2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025];
+
+// DOT VISUALIZATION
+const dotCanvas = document.getElementById('dotCanvas');
+const dotCtx = dotCanvas.getContext('2d');
+const yearSlider = document.getElementById('yearSlider');
+const dotYearEl = document.getElementById('dotYear');
+const dotCountEl = document.getElementById('dotCount');
+
+let dotPositions = [];
+const DOT_SCALE = 10000; // 1 dot = 10,000 cases
+
+function initDots() {
+  const rect = dotCanvas.getBoundingClientRect();
+  dotCanvas.width = rect.width * window.devicePixelRatio;
+  dotCanvas.height = rect.height * window.devicePixelRatio;
+  dotCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+  const w = rect.width;
+  const h = rect.height;
+  const maxDots = Math.ceil(3500000 / DOT_SCALE);
+
+  dotPositions = [];
+  for (let i = 0; i < maxDots; i++) {
+    dotPositions.push({
+      x: Math.random() * (w - 8) + 4,
+      y: Math.random() * (h - 8) + 4,
+      r: 2.5 + Math.random() * 1.5,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function drawDots(idx) {
+  const d = yearData[idx];
+  const rect = dotCanvas.getBoundingClientRect();
+  const w = rect.width;
+  const h = rect.height;
+
+  dotCtx.clearRect(0, 0, w, h);
+
+  const numDots = Math.max(1, Math.ceil(d.cases / DOT_SCALE));
+  const t = Date.now() / 1000;
+
+  for (let i = 0; i < numDots && i < dotPositions.length; i++) {
+    const p = dotPositions[i];
+    const pulse = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(t * 0.8 + p.phase));
+
+    if (d.cases <= 100) {
+      // Green for very low counts
+      dotCtx.fillStyle = `rgba(74, 255, 139, ${pulse})`;
+      dotCtx.shadowColor = 'rgba(74, 255, 139, 0.5)';
+      dotCtx.shadowBlur = 8;
+    } else if (d.cases <= 10000) {
+      dotCtx.fillStyle = `rgba(255, 184, 74, ${pulse * 0.8})`;
+      dotCtx.shadowColor = 'transparent';
+      dotCtx.shadowBlur = 0;
+    } else {
+      dotCtx.fillStyle = `rgba(255, 107, 74, ${pulse * 0.5})`;
+      dotCtx.shadowColor = 'transparent';
+      dotCtx.shadowBlur = 0;
+    }
+
+    dotCtx.beginPath();
+    // For very low case counts, make dots bigger and more visible
+    const r = d.cases <= 100 ? 6 : d.cases <= 1000 ? 4 : p.r;
+    dotCtx.arc(p.x, p.y, r, 0, Math.PI * 2);
+    dotCtx.fill();
+  }
+
+  dotCtx.shadowColor = 'transparent';
+  dotCtx.shadowBlur = 0;
+
+  dotYearEl.textContent = d.year;
+
+  if (d.cases >= 1000000) {
+    dotCountEl.textContent = `~${(d.cases / 1000000).toFixed(1)}M cases`;
+  } else if (d.cases >= 1000) {
+    dotCountEl.textContent = `~${(d.cases / 1000).toFixed(d.cases < 10000 ? 1 : 0)}K cases`;
+  } else {
+    dotCountEl.textContent = `${d.cases} cases`;
+  }
+
+  dotCountEl.className = d.cases <= 100 ? 'dot-count-display low' : 'dot-count-display';
+}
+
+function animateDots() {
+  const idx = parseInt(yearSlider.value);
+  drawDots(idx);
+  requestAnimationFrame(animateDots);
+}
+
+yearSlider.addEventListener('input', () => {
+  // Animation loop handles drawing
+});
+
+// Country grid
+function buildCountryGrid() {
+  const grid = document.getElementById('countryGrid');
+  countries.forEach(c => {
+    const max = Math.max(...c.cases, 1);
+    const card = document.createElement('div');
+    card.className = 'country-card';
+
+    const statusClass = c.status === 'endemic' ? 'endemic' :
+                        c.status === 'certified' ? 'certified' : 'endemic';
+
+    const barsHtml = c.cases.map((v, i) => {
+      const h = Math.max(1, (v / max) * 36);
+      const title = `${countryYears[i]}: ${v}`;
+      return `<div class="sparkline-bar" style="height: ${h}px" title="${title}"></div>`;
+    }).join('');
+
+    const total2025 = c.cases[c.cases.length - 1];
+    card.innerHTML = `
+      <h4>${c.name}</h4>
+      <div class="status ${statusClass}">${c.status} · 2025: ${total2025} case${total2025 !== 1 ? 's' : ''}</div>
+      <div class="sparkline">${barsHtml}</div>
+      <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:0.65rem;color:var(--dim);margin-top:4px;">
+        <span>2015</span><span>2025</span>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// Init
+window.addEventListener('load', () => {
+  initDots();
+  animateDots();
+  buildCountryGrid();
+});
+
+window.addEventListener('resize', () => {
+  initDots();
+});
+</script>
+
+</body>
+</html>
