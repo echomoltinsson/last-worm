@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +8,12 @@
   @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;600&display=swap');
 
   :root {
+    --serif: 'Source Serif 4', Georgia, serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  /* Dark theme (default) */
+  [data-theme="dark"] {
     --bg: #0a0a0f;
     --text: #c8c8d0;
     --dim: #666680;
@@ -15,8 +21,49 @@
     --warm: #ff6b4a;
     --gold: #ffb84a;
     --green: #4aff8b;
-    --serif: 'Source Serif 4', Georgia, serif;
-    --mono: 'JetBrains Mono', monospace;
+    --heading: #ffffff;
+    --card-bg: rgba(255,255,255,0.02);
+    --card-border: rgba(255,255,255,0.06);
+    --section-border: rgba(255,255,255,0.05);
+    --slider-track: rgba(255,255,255,0.1);
+    --pullquote-border: #4a9eff;
+    --dot-warm-rgb: 255, 107, 74;
+    --dot-gold-rgb: 255, 184, 74;
+    --dot-green-rgb: 74, 255, 139;
+    --ctrl-bg: rgba(255,255,255,0.05);
+    --ctrl-border: rgba(255,255,255,0.1);
+    --ctrl-hover-bg: rgba(74, 158, 255, 0.15);
+    --input-bg: rgba(255,255,255,0.05);
+    --input-border: rgba(255,255,255,0.15);
+    --input-text: #c8c8d0;
+    --hero-overlay: none;
+  }
+
+  /* Light theme */
+  [data-theme="light"] {
+    --bg: #f8f7f4;
+    --text: #3d3d4a;
+    --dim: #7a7a8c;
+    --accent: #2563eb;
+    --warm: #dc2626;
+    --gold: #d97706;
+    --green: #059669;
+    --heading: #1a1a2e;
+    --card-bg: #ffffff;
+    --card-border: #e2e2ea;
+    --section-border: #e2e2ea;
+    --slider-track: #d1d5db;
+    --pullquote-border: #2563eb;
+    --dot-warm-rgb: 220, 38, 38;
+    --dot-gold-rgb: 217, 119, 6;
+    --dot-green-rgb: 5, 150, 105;
+    --ctrl-bg: #ffffff;
+    --ctrl-border: #d1d5db;
+    --ctrl-hover-bg: rgba(37, 99, 235, 0.08);
+    --input-bg: #ffffff;
+    --input-border: #d1d5db;
+    --input-text: #3d3d4a;
+    --hero-overlay: linear-gradient(135deg, rgba(26,26,46,0.92), rgba(26,26,46,0.88));
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -28,6 +75,7 @@
     font-family: var(--serif);
     line-height: 1.7;
     overflow-x: hidden;
+    transition: background 0.4s ease, color 0.4s ease;
   }
 
   .hero {
@@ -45,7 +93,7 @@
     font-size: clamp(2.5rem, 6vw, 5rem);
     font-weight: 300;
     letter-spacing: 0.05em;
-    color: #fff;
+    color: var(--heading);
     margin-bottom: 1rem;
   }
 
@@ -108,7 +156,7 @@
   .section-title {
     font-size: 1.8rem;
     font-weight: 300;
-    color: #fff;
+    color: var(--heading);
     margin-bottom: 2rem;
     text-align: center;
   }
@@ -153,7 +201,7 @@
     font-family: var(--mono);
     font-size: 2rem;
     font-weight: 600;
-    color: #fff;
+    color: var(--heading);
   }
 
   .scale-info .context {
@@ -189,8 +237,8 @@
   }
 
   .timeline-controls button {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--ctrl-bg);
+    border: 1px solid var(--ctrl-border);
     color: var(--text);
     padding: 0.5rem 1.2rem;
     font-family: var(--mono);
@@ -202,7 +250,7 @@
 
   .timeline-controls button:hover,
   .timeline-controls button.active {
-    background: rgba(74, 158, 255, 0.15);
+    background: var(--ctrl-hover-bg);
     border-color: var(--accent);
     color: var(--accent);
   }
@@ -252,7 +300,7 @@
   .milestone-text h3 {
     font-size: 1.1rem;
     font-weight: 400;
-    color: #fff;
+    color: var(--heading);
     margin-bottom: 0.5rem;
   }
 
@@ -280,10 +328,11 @@
   }
 
   .country-card {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.06);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 8px;
     padding: 1.5rem;
+    transition: background 0.3s ease, border-color 0.3s ease;
   }
 
   .country-card h4 {
@@ -334,8 +383,8 @@
   .narrative .pullquote {
     font-size: 1.4rem;
     font-style: italic;
-    color: #fff;
-    border-left: 3px solid var(--accent);
+    color: var(--heading);
+    border-left: 3px solid var(--pullquote-border);
     padding-left: 1.5rem;
     margin: 3rem 0;
     line-height: 1.5;
@@ -396,7 +445,7 @@
   .dot-year-display {
     font-family: var(--mono);
     font-size: 3rem;
-    color: #fff;
+    color: var(--heading);
     margin-bottom: 0.5rem;
   }
 
@@ -414,6 +463,11 @@
     width: 100%;
     height: 400px;
     border-radius: 8px;
+    background: #0a0a0f;
+  }
+
+  [data-theme="light"] canvas#dotCanvas {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
   }
 
   .dot-slider-wrap {
@@ -426,7 +480,7 @@
     appearance: none;
     -webkit-appearance: none;
     height: 4px;
-    background: rgba(255,255,255,0.1);
+    background: var(--slider-track);
     border-radius: 2px;
     outline: none;
     cursor: pointer;
@@ -466,7 +520,7 @@
   footer {
     text-align: center;
     padding: 4rem 2rem;
-    border-top: 1px solid rgba(255,255,255,0.05);
+    border-top: 1px solid var(--section-border);
     color: var(--dim);
     font-size: 0.85rem;
   }
@@ -478,15 +532,113 @@
 
   footer a:hover { text-decoration: underline; }
 
+  /* Theme toggle */
+  .theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 100;
+    background: var(--ctrl-bg);
+    border: 1px solid var(--ctrl-border);
+    border-radius: 50px;
+    width: 52px;
+    height: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--accent);
+  }
+
+  .toggle-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  [data-theme="light"] .toggle-thumb {
+    transform: translateX(24px);
+  }
+
+  /* Jump-to navigation */
+  .jump-nav {
+    position: fixed;
+    top: 1rem;
+    right: 4.5rem;
+    z-index: 100;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .jump-nav select {
+    background: var(--ctrl-bg);
+    border: 1px solid var(--ctrl-border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    padding: 0.4rem 0.6rem;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    appearance: none;
+    -webkit-appearance: none;
+    min-width: 140px;
+    transition: border-color 0.2s;
+  }
+
+  .jump-nav select:hover,
+  .jump-nav select:focus {
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .jump-nav option {
+    background: var(--bg);
+    color: var(--text);
+  }
+
   /* Responsive */
   @media (max-width: 768px) {
     .scale-row { flex-direction: column; text-align: center; }
     .milestone { grid-template-columns: 80px 2px 1fr; gap: 1rem; }
     .hero .stat-intro { gap: 2rem; }
+    .jump-nav { top: auto; bottom: 1rem; right: 1rem; left: 1rem; justify-content: center; }
+    .jump-nav select { min-width: 120px; font-size: 0.7rem; }
+    .theme-toggle { top: auto; bottom: 1rem; right: auto; left: 1rem; }
   }
 </style>
 </head>
 <body>
+
+<!-- Theme toggle -->
+<div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" role="button" aria-label="Toggle theme">
+  <div class="toggle-thumb" id="themeIcon">🌙</div>
+</div>
+
+<!-- Jump-to navigation -->
+<div class="jump-nav">
+  <select id="jumpYear" onchange="jumpToYear(this.value)" aria-label="Jump to year">
+    <option value="">Jump to year…</option>
+  </select>
+  <select id="jumpCountry" onchange="jumpToCountry(this.value)" aria-label="Jump to country">
+    <option value="">Jump to country…</option>
+  </select>
+</div>
 
 <div class="hero">
   <h1>The Last Worm</h1>
@@ -545,7 +697,7 @@
   <h2 class="section-title">Milestones</h2>
 
   <div class="milestones">
-    <div class="milestone">
+    <div class="milestone" id="milestone-1986">
       <div class="milestone-year">1986</div>
       <div class="milestone-line"></div>
       <div class="milestone-text">
@@ -554,7 +706,7 @@
       </div>
     </div>
 
-    <div class="milestone">
+    <div class="milestone" id="milestone-1989">
       <div class="milestone-year">1989</div>
       <div class="milestone-line"></div>
       <div class="milestone-text">
@@ -563,7 +715,7 @@
       </div>
     </div>
 
-    <div class="milestone">
+    <div class="milestone" id="milestone-1993">
       <div class="milestone-year">1993</div>
       <div class="milestone-line"></div>
       <div class="milestone-text">
@@ -572,7 +724,7 @@
       </div>
     </div>
 
-    <div class="milestone">
+    <div class="milestone" id="milestone-1995">
       <div class="milestone-year">1995</div>
       <div class="milestone-line"></div>
       <div class="milestone-text">
@@ -581,7 +733,7 @@
       </div>
     </div>
 
-    <div class="milestone">
+    <div class="milestone" id="milestone-2004">
       <div class="milestone-year">2004</div>
       <div class="milestone-line"></div>
       <div class="milestone-text">
@@ -590,7 +742,7 @@
       </div>
     </div>
 
-    <div class="milestone">
+    <div class="milestone" id="milestone-2012">
       <div class="milestone-year">2012</div>
       <div class="milestone-line"></div>
       <div class="milestone-text">
@@ -599,7 +751,7 @@
       </div>
     </div>
 
-    <div class="milestone">
+    <div class="milestone" id="milestone-2015">
       <div class="milestone-year">2015</div>
       <div class="milestone-line"></div>
       <div class="milestone-text">
@@ -608,7 +760,7 @@
       </div>
     </div>
 
-    <div class="milestone">
+    <div class="milestone" id="milestone-2024">
       <div class="milestone-year">2024</div>
       <div class="milestone-line"></div>
       <div class="milestone-text">
@@ -617,7 +769,7 @@
       </div>
     </div>
 
-    <div class="milestone">
+    <div class="milestone" id="milestone-2025">
       <div class="milestone-year">2025</div>
       <div class="milestone-line"></div>
       <div class="milestone-text">
@@ -666,6 +818,80 @@
 </footer>
 
 <script>
+// ────── Theme ──────
+function initTheme() {
+  const saved = localStorage.getItem('last-worm-theme');
+  applyTheme(saved || 'dark');
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  localStorage.setItem('last-worm-theme', next);
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeIcon').textContent = theme === 'dark' ? '🌙' : '☀️';
+}
+
+initTheme();
+
+// ────── Jump-to Navigation ──────
+function jumpToYear(val) {
+  if (!val) return;
+  // First try to move the slider to this year
+  const idx = yearData.findIndex(d => d.year === parseInt(val));
+  if (idx >= 0) {
+    const slider = document.getElementById('yearSlider');
+    slider.value = idx;
+    // Scroll to dot viz
+    document.querySelector('.dot-viz').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  // Also scroll to milestone if one exists for this year
+  const milestoneEl = document.getElementById('milestone-' + val);
+  if (milestoneEl) {
+    setTimeout(() => milestoneEl.scrollIntoView({ behavior: 'smooth', block: 'center' }), 600);
+  }
+  // Reset select
+  document.getElementById('jumpYear').value = '';
+}
+
+function jumpToCountry(val) {
+  if (!val) return;
+  const el = document.getElementById('country-' + val.toLowerCase().replace(/\s+/g, '-'));
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Subtle highlight
+    el.style.borderColor = 'var(--accent)';
+    el.style.boxShadow = '0 0 20px rgba(37,99,235,0.15)';
+    setTimeout(() => {
+      el.style.borderColor = '';
+      el.style.boxShadow = '';
+    }, 2000);
+  }
+  document.getElementById('jumpCountry').value = '';
+}
+
+function populateJumpMenus() {
+  const yearSelect = document.getElementById('jumpYear');
+  yearData.forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d.year;
+    opt.textContent = d.label ? `${d.year} — ${d.label}` : `${d.year}`;
+    yearSelect.appendChild(opt);
+  });
+
+  const countrySelect = document.getElementById('jumpCountry');
+  countries.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.name;
+    opt.textContent = `${c.name} (${c.status})`;
+    countrySelect.appendChild(opt);
+  });
+}
+
 // Data: year -> approximate case count
 const yearData = [
   { year: 1986, cases: 3500000, label: 'Campaign begins' },
@@ -777,6 +1003,10 @@ function initDots() {
   }
 }
 
+function getThemeRGB(varName) {
+  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+}
+
 function drawDots(idx) {
   const d = yearData[idx];
   const rect = dotCanvas.getBoundingClientRect();
@@ -788,27 +1018,30 @@ function drawDots(idx) {
   const numDots = Math.max(1, Math.ceil(d.cases / DOT_SCALE));
   const t = Date.now() / 1000;
 
+  // Canvas always has dark background, so use bright dot colors regardless of theme
+  const warmRGB = '255, 107, 74';
+  const goldRGB = '255, 184, 74';
+  const greenRGB = '74, 255, 139';
+
   for (let i = 0; i < numDots && i < dotPositions.length; i++) {
     const p = dotPositions[i];
     const pulse = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(t * 0.8 + p.phase));
 
     if (d.cases <= 100) {
-      // Green for very low counts
-      dotCtx.fillStyle = `rgba(74, 255, 139, ${pulse})`;
-      dotCtx.shadowColor = 'rgba(74, 255, 139, 0.5)';
+      dotCtx.fillStyle = `rgba(${greenRGB}, ${pulse})`;
+      dotCtx.shadowColor = `rgba(${greenRGB}, 0.5)`;
       dotCtx.shadowBlur = 8;
     } else if (d.cases <= 10000) {
-      dotCtx.fillStyle = `rgba(255, 184, 74, ${pulse * 0.8})`;
+      dotCtx.fillStyle = `rgba(${goldRGB}, ${pulse * 0.8})`;
       dotCtx.shadowColor = 'transparent';
       dotCtx.shadowBlur = 0;
     } else {
-      dotCtx.fillStyle = `rgba(255, 107, 74, ${pulse * 0.5})`;
+      dotCtx.fillStyle = `rgba(${warmRGB}, ${pulse * 0.5})`;
       dotCtx.shadowColor = 'transparent';
       dotCtx.shadowBlur = 0;
     }
 
     dotCtx.beginPath();
-    // For very low case counts, make dots bigger and more visible
     const r = d.cases <= 100 ? 6 : d.cases <= 1000 ? 4 : p.r;
     dotCtx.arc(p.x, p.y, r, 0, Math.PI * 2);
     dotCtx.fill();
@@ -847,6 +1080,8 @@ function buildCountryGrid() {
     const max = Math.max(...c.cases, 1);
     const card = document.createElement('div');
     card.className = 'country-card';
+    card.id = 'country-' + c.name.toLowerCase().replace(/\s+/g, '-');
+    card.style.transition = 'border-color 0.5s ease, box-shadow 0.5s ease';
 
     const statusClass = c.status === 'endemic' ? 'endemic' :
                         c.status === 'certified' ? 'certified' : 'endemic';
@@ -875,6 +1110,7 @@ window.addEventListener('load', () => {
   initDots();
   animateDots();
   buildCountryGrid();
+  populateJumpMenus();
 });
 
 window.addEventListener('resize', () => {
